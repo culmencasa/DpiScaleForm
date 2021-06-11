@@ -1,11 +1,13 @@
-# DpiScaleForm
-根据DPI比例缩放窗体和控件大小的例子
+# DpiScaleFormDemo
+**根据DPI比例缩放窗体和控件大小的例子**
 
-在DPI为125%的状态下, UseDpiScale为true和false的对比
+
 
 ![在DPI为125%的状态下, UseDpiScale为true和false的对比](https://github.com/culmencasa/DpiScaleForm/blob/main/NoneVsDPI.png)
+               (在DPI为125%的状态下, UseDpiScale为true和false的对比)
 
-2021-06-11 测试环境: Windows 10, Visual Studio 2019 .Net Framework 3.5
+
+2021-06-11 测试环境: Windows 10,XP, Visual Studio 2019, .Net Framework 3.5
 
 实现方式: 计算当前DPI比例获得factor值, 调用Form的Scale()传入factor值. 调整控件字体.
 
