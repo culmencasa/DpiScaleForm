@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Management;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 
 /// <summary>
 /// DpiScaleForm 缩放窗体
@@ -28,7 +29,7 @@ using System.Diagnostics;
 ///      仅作参考.
 ///      对于.NET framework 4.7以上Winform 关于DPI的处理, 参见文章 https://docs.telerik.com/devtools/winforms/telerik-presentation-framework/dpi-support?_ga=2.20289336.1856590203.1623301720-198642324.1623301720
 /// </summary>
-public partial class DpiScaleForm : Form
+public class DpiScaleForm : Form
 {
     #region 字段
 
@@ -103,37 +104,34 @@ public partial class DpiScaleForm : Form
 
 
     #endregion
-
-    #region 重写Form的成员
-
-    protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-    {
-        if (!DesignMode && UseDpiScale)
-        {
-            // 不处理Font模式
-            if (this.AutoScaleMode == AutoScaleMode.Font)
-            {
-                base.ScaleControl(new SizeF(1, 1), specified);
-            }
-            else
-            {
-                base.ScaleControl(factor, specified);
-            }
-        }
-        else
-        {
-            base.ScaleControl(factor, specified);
-        }
-    }
-
-    #endregion
+     
 
     #region 静态方法
 
     public static int ScaleInt(int value, SizeF scaleFactor)
     {
-        return (int)Math.Round((double)((float)value * scaleFactor.Width), MidpointRounding.AwayFromZero);
+        return (int)Math.Round(value * scaleFactor.Width, MidpointRounding.AwayFromZero);
     }
+
+    private static Bitmap ScaleImage(Image source, Size oldSize, float factor)
+    {
+        var scaled = new Size(oldSize.Width * (int)factor, oldSize.Height * (int)factor);
+
+        Bitmap bitmap = new Bitmap(scaled.Width, scaled.Height, PixelFormat.Format32bppArgb);
+        using (var g = Graphics.FromImage(bitmap))
+        {
+            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.DrawImage(source, 0, 0, scaled.Width, scaled.Height);
+        }
+
+        return bitmap;
+    }
+
+
 
     #endregion
 
@@ -174,7 +172,9 @@ public partial class DpiScaleForm : Form
             var factor = GetCurrentScaleFactor();
             CurrentScaleFactor = new SizeF(factor, factor);
             this.Scale(CurrentScaleFactor);
+            MessageBox.Show(CurrentScaleFactor.Width.ToString());
             this.ScaleFonts(factor);
+            this.ScaleSpecialControl(this, factor);
 
         }
         else
@@ -185,10 +185,47 @@ public partial class DpiScaleForm : Form
 
     #endregion
 
-    #region 配合窗体的ScaleControl方法, 手动调整控件字体及特殊控件大小
+    #region 调整控件字体及大小
 
     /// <summary>
-    /// 
+    /// 缩放控件
+    /// </summary>
+    /// <param name="factor"></param>
+    /// <param name="specified"></param>
+    protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+    {
+        // 跳过设计模式
+        if (DesignMode)
+        {
+            base.ScaleControl(factor, specified);
+            return;
+        }
+
+        // 自动模式
+        if (AutoDpiScale)
+        {
+            // 不处理Font模式
+            if (this.AutoScaleMode == AutoScaleMode.Font)
+            {
+                base.ScaleControl(new SizeF(1, 1), specified);
+            }
+            else
+            {
+                base.ScaleControl(factor, specified);
+            }
+        }
+        // 强制模式
+        else if (UseDpiScale) 
+        {
+            base.ScaleControl(this.CurrentScaleFactor, specified);
+        }
+        else
+        {
+            base.ScaleControl(factor, specified);
+        }
+    }
+    /// <summary>
+    /// 缩放字体
     /// </summary>
     /// <param name="scaleFactor"></param>
     public void ScaleFonts(float scaleFactor)
@@ -221,11 +258,33 @@ public partial class DpiScaleForm : Form
 
     }
 
-
+    /// <summary>
+    /// 缩放个别控件
+    /// </summary>
+    /// <param name="control"></param>
+    /// <param name="factor"></param>
     protected virtual void ScaleSpecialControl(Control control, float factor)
     {
         // 暂无实现
+        foreach (Control child in control.Controls)
+        {
+            if (child is PictureBox)
+            {
+                var picbox = (PictureBox)child;
+                if (picbox.SizeMode == PictureBoxSizeMode.AutoSize)
+                {
+                    picbox.Image = ScaleImage(picbox.Image, picbox.Size, factor);
+                }
+                else
+                { 
+                
+                }
+            }
+
+        }
     }
+
+
 
     #endregion
 
