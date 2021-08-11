@@ -1,8 +1,13 @@
-# DpiScaleForm
-根据DPI比例缩放窗体和控件大小的例子
+# DpiScaleFormDemo
+**根据DPI比例缩放窗体和控件大小的例子**
 
 
-2021-06-11 环境: Visual Studio 2008 .Net Framework 3.5
+
+![在DPI为125%的状态下, UseDpiScale为true和false的对比](https://github.com/culmencasa/DpiScaleForm/blob/main/NoneVsDPI.png)
+               (在DPI为125%的状态下, UseDpiScale为true和false的对比)
+
+
+2021-06-11 测试环境: Windows 10,XP, Visual Studio 2019, .Net Framework 3.5
 
 实现方式: 计算当前DPI比例获得factor值, 调用Form的Scale()传入factor值. 调整控件字体.
 
@@ -20,3 +25,5 @@
      仅作参考.
      
 对于.NET framework 4.7以上Winform 关于DPI的处理, 参见文章 https://docs.telerik.com/devtools/winforms/telerik-presentation-framework/dpi-support?_ga=2.20289336.1856590203.1623301720-198642324.1623301720
+
+
