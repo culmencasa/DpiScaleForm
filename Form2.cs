@@ -9,15 +9,15 @@ using System.Windows.Forms;
 
 namespace DpiScaleFormDemo
 {
-    public partial class Form1 : DpiScaleForm
+    public partial class Form2 : DpiScaleForm
     {
-        public Form1()
+        public Form2()
         {
             InitializeComponent();
 
 
-            // 窗体是在Winows 96DPI （100%）显示设置下设计的。
-            DesignFactor = 1f;
+            // 窗体是在Winows 192DPI （200%）显示设置下设计的。
+            DesignFactor = 2f;
             UseDpiScale = true;
         }
     }
