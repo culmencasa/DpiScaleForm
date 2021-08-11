@@ -179,28 +179,33 @@ namespace System.Windows.Forms
 
         protected virtual void OnApplyAutoDpiScale()
         {
-
-
             if (AutoDpiScale)
             {
                 // Font模式下, 使用Window的缩放
-                if (this.AutoScaleMode != AutoScaleMode.Font)
+                if (this.AutoScaleMode == AutoScaleMode.Font)
                 {
                     return;
                 }
                 else
                 {
                     var factor = GetCurrentScaleFactor();
+
                     // 如果当前DPI大于100%, 则使用自定义的缩放
                     if (factor > 1)
                     {
-                        //todo:根据系统版本来判定
-                        //if (Environment.OSVersion.Version.Major >= 6)
-                        //{
-                        //}
-
-                        UseDpiScale = true;
+                        bool dpiAwareSupport = Environment.OSVersion.Version.Major >= 6;
+                        if (dpiAwareSupport)
+                        {
+                            DesignFactor = factor;
+                        }
+                        else
+                        {
+                            DesignFactor = AutoScaleDimensions.Width / 96;
+                        }
                     }
+
+
+                    UseDpiScale = true;
                 }
             }
         }
