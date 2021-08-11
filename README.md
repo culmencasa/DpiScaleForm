@@ -4,7 +4,7 @@
 
 
 ![在DPI为125%的状态下, UseDpiScale为true和false的对比](https://github.com/culmencasa/DpiScaleForm/blob/main/NoneVsDPI.png)
-               >>>同一窗体，在100%下设计，在另一个DPI为125%的系统下, UseDpiScale为true和false的对比<<<
+               >>>同一窗体Form1, AutoScaleMode=None，在DPI为125%的系统下, UseDpiScale为true强制缩放后的对比<<<
 
 
 #### 2021-06-11 测试环境: Windows 10,XP, Visual Studio 2019, .Net Framework 3.5, 4.0, 4.8
