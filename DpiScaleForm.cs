@@ -202,10 +202,10 @@ namespace System.Windows.Forms
                         {
                             DesignFactor = AutoScaleDimensions.Width / 96;
                         }
+
+                        UseDpiScale = true;
                     }
 
-
-                    UseDpiScale = true;
                 }
             }
         }
